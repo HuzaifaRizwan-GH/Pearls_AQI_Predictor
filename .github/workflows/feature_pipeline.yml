@@ -1,0 +1,31 @@
+name: Hourly AQI Feature Pipeline
+
+on:
+  schedule:
+    # Runs automatically at the start of every hour (UTC)
+    - cron: '0 * * * *'
+  workflow_dispatch: # Allows manual trigger anytime via GitHub UI
+
+jobs:
+  run-pipeline:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: Check out Repository
+        uses: actions/checkout@v3
+
+      - name: Set up Python 3.11
+        uses: actions/setup-python@v4
+        with:
+          python-version: '3.11'
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install pandas requests hopsworks python-dotenv
+
+      - name: Execute Live Ingestion Script
+        env:
+          HOPSWORKS_API_KEY: ${{ secrets.HOPSWORKS_API_KEY }}
+        run: |
+          python feature_pipeline/fetch_air_quality.py
