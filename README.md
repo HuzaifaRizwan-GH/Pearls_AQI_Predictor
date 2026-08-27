@@ -6,6 +6,16 @@ An end-to-end **Data Science and MLOps project** that automatically collects env
 
 ---
 
+## 🌐 Live Streamlit Cloud Deployment
+
+The interactive Karachi Atmospheric Observatory dashboard is publicly deployed on Streamlit Community Cloud and directly integrated with the Hopsworks Feature Store:
+
+* **Live Dashboard URL:** [https://pearlsaqipredictor-huzaifarizwan.streamlit.app](https://pearlsaqipredictor-huzaifarizwan.streamlit.app)
+* **Hosting Platform:** Streamlit Community Cloud (Python 3.11 Runtime)
+* **Cloud Architecture:** Standalone microservice fallback with secure TOML secrets management connecting directly to Hopsworks Feature Store.
+
+--- 
+
 ## 🛰️ Live Dashboard & System Architecture
 
 The project uses a two-tier microservices architecture consisting of a **FastAPI backend** and a **Streamlit frontend**.
@@ -235,6 +245,7 @@ Pearls_AQI_Predictor/
 │   └── my_API.py                         # Standalone REST API test endpoint
 │
 ├── dashboard_UI/
+│   ├── .streamlit/                       # Local Streamlit config & secrets (Git-ignored)
 │   ├── App_dashboard_backend.py          # FastAPI backend microservice (Port 8000)
 │   └── app.py                            # Streamlit Atmospheric Observatory UI (Port 8501)
 │
@@ -248,7 +259,7 @@ Pearls_AQI_Predictor/
 │
 ├── feature_pipeline/                     # Core Data Engineering Modules
 │   ├── backfill_2year_data.py            # Hopsworks Feature Store 2-Year Hudi backfill script
-│   ├── backfill_histdata.py            # Historical data extraction logic
+│   ├── backfill_histdata.py              # Historical data extraction logic
 │   ├── calculate_AQI.py                  # EPA sub-index calculation script
 │   ├── calculate_historical_AQI.py       # Historical AQI processing
 │   ├── create_features.py               # Feature transformation and lag generation
