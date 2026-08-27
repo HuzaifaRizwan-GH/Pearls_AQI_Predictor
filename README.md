@@ -229,54 +229,46 @@ Pearls_AQI_Predictor/
 │
 ├── .github/
 │   └── workflows/
-│       └── feature_pipeline.yml
-│           # GitHub Actions hourly CI/CD workflow
+│       └── feature_pipeline.yml          # GitHub Actions hourly CI/CD cron job
 │
 ├── API/
-│   └── my_API.py
-│       # Standalone API test endpoint
+│   └── my_API.py                         # Standalone REST API test endpoint
 │
 ├── dashboard_UI/
-│   ├── App_dashboard_backend.py
-│   │   # FastAPI backend server
-│   │
-│   └── app.py
-│       # Streamlit Atmospheric Observatory UI
+│   ├── App_dashboard_backend.py          # FastAPI backend microservice (Port 8000)
+│   └── app.py                            # Streamlit Atmospheric Observatory UI (Port 8501)
 │
-├── data/
-│   # Local raw data and feature snapshots
+├── data/                                 # Local CSV data snapshots
+│   ├── aqi_features.csv
+│   ├── features.csv
+│   ├── historical_aqi_features.csv
+│   ├── historical_features.csv
+│   ├── historical_raw_data.csv
+│   └── raw_data.csv
 │
-├── feature_pipeline/
-│   ├── fetch_air_quality.py
-│   │   # Real-time environmental data ingestion
-│   │
-│   ├── backfill_histdata.py
-│   │   # Historical data backfill
-│   │
-│   ├── create_features.py
-│   │   # Feature engineering
-│   │
-│   ├── calculate_AQI.py
-│   │   # AQI calculation
-│   │
-│   └── validating_training_data.py
-│       # Training-data validation
+├── feature_pipeline/                     # Core Data Engineering Modules
+│   ├── backfill_2year_data.py            # Hopsworks Feature Store 2-Year Hudi backfill script
+│   ├── backfill_histdata.py            # Historical data extraction logic
+│   ├── calculate_AQI.py                  # EPA sub-index calculation script
+│   ├── calculate_historical_AQI.py       # Historical AQI processing
+│   ├── create_features.py               # Feature transformation and lag generation
+│   ├── creating_historical_features.py  # Historical feature construction
+│   ├── fetch_air_quality.py              # Real-time hourly Open-Meteo REST API ingestion
+│   └── validating_training_data.py      # Feature validation pipeline
 │
-├── notebook/
-│   ├── hopsworks_feature_store.ipynb
-│   │   # Model training, evaluation and Hopsworks integration
-│   │
-│   ├── data/
-│   │   # Notebook source data
-│   │
-│   └── model_dir/
-│       # Serialized model and SHAP artifacts
+├── models/                               # Local model storage directory
 │
-├── requirements.txt
-│   # Python dependencies
+├── notebook/                             # Research & Model Development
+│   ├── hopsworks_feature_store.ipynb     # EDA, training, baseline evaluation & Hopsworks sync
+│   ├── data/                             # Notebook source data
+│   └── model_dir/                        # Serialized model & SHAP artifacts
 │
-└── README.md
-    # Project documentation
+├── training_pipeline/                    # Retraining pipeline modules
+│
+├── .env                                  # Environment variables (Git-ignored)
+├── .gitignore                             # Git ignore rules
+├── requirements.txt                      # Project python dependency definitions
+└── README.md                             # Production project documentation
 ```
 
 ---

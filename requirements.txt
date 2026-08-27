@@ -1,0 +1,12 @@
+pandas
+numpy
+scikit-learn
+requests
+hopsworks
+fastapi
+uvicorn
+streamlit
+plotly
+shap
+python-dotenv
+joblib
