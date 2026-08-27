@@ -1,139 +1,554 @@
-# 🌆 Automated MLOps for Air Quality: Pearls AQI Predictor
+# 🌆 Pearls AQI Predictor
+
+### Automated MLOps for 72-Hour Air Quality Forecasting in Karachi, Pakistan
+
+An end-to-end **Data Science and MLOps project** that automatically collects environmental data, engineers machine-learning features, stores them in a cloud Feature Store, trains an AQI forecasting model, and serves interpretable **24-, 48-, and 72-hour air quality predictions** through a live dashboard.
 
 ---
 
-## 🛰️ Live Dashboard & System Infrastructure
+## 🛰️ Live Dashboard & System Architecture
 
-The interactive prediction interface is powered by a two-tier microservices architecture featuring a **FastAPI backend** and a **Streamlit frontend**.
+The project uses a two-tier microservices architecture consisting of a **FastAPI backend** and a **Streamlit frontend**.
 
-* **Backend Microservice:** FastAPI REST engine running on `http://127.0.0.1:8000`, exposing `/predict` endpoints and loading Hopsworks model weights into memory.
-* **Frontend Observatory:** Streamlit UI running on `http://localhost:8501`, featuring dynamic EPA health advisories, interactive Plotly trajectory curves, a 3-day "Haze Horizon" severity band, and live SHAP feature contribution charts.
+### Backend — FastAPI
+
+The FastAPI service provides the model inference layer.
+
+* Runs locally on `http://127.0.0.1:8000`
+* Exposes REST prediction endpoints
+* Loads the trained Ridge Regression model
+* Retrieves model artifacts from Hopsworks Model Registry
+* Provides interactive API documentation through Swagger
+
+### Frontend — Streamlit
+
+The Streamlit application provides the user-facing **Atmospheric Observatory** dashboard.
+
+* Runs locally on `http://localhost:8501`
+* Displays 24-, 48-, and 72-hour AQI forecasts
+* Provides EPA-based health advisories
+* Displays interactive Plotly AQI trajectory charts
+* Shows a 3-day **Haze Horizon** severity visualization
+* Provides SHAP-based feature contribution explanations
 
 ---
 
-## 📝 Introduction
+# 📝 Introduction
 
-This repository implements a production-grade, end-to-end MLOps ecosystem designed to forecast Air Quality Index (AQI) trajectories up to **72 hours into the future** for Karachi, Pakistan. By coupling hourly environmental data ingestion with automated cloud pipelines, the system delivers continuous 24, 48, and 72-hour forecast horizons.
+**Pearls AQI Predictor** is a production-oriented MLOps system designed to forecast **Air Quality Index (AQI) up to 72 hours into the future for Karachi, Pakistan**.
 
-Built for modularity and scalability, the system relies on **Hopsworks Cloud** as both a Feature Store (`aqi_historical_features` v2) and Model Registry, **GitHub Actions** for CI/CD scheduled orchestration, a **Ridge Regression** forecasting model, and **SHAP (SHapley Additive exPlanations)** for explainable AI metrics.
+The system combines:
+
+* Hourly environmental data ingestion
+* Automated feature engineering
+* Cloud-based feature storage
+* Machine-learning model training
+* Model versioning
+* CI/CD automation
+* REST API model serving
+* Interactive visualization
+* Explainable AI using SHAP
+
+The project uses **Hopsworks Cloud** as the Feature Store and Model Registry, **GitHub Actions** for automated hourly pipeline execution, a **Ridge Regression** model for forecasting, and **SHAP (SHapley Additive exPlanations)** for model interpretability.
+
+The architecture is designed to be modular, reproducible, and scalable.
 
 ---
 
-## ✨ Key Features
+# ✨ Key Features
 
-* **Automated Hourly Ingestion:** Continuous extraction of atmospheric pollutants ($\text{PM}_{2.5}$, $\text{PM}_{10}$, $\text{CO}$, $\text{NO}_2$, $\text{SO}_2$, $\text{O}_3$) and meteorological variables (temperature, relative humidity, surface pressure, wind speed, precipitation) via the Open-Meteo REST API.
-* **Feature Engineering & Leak-Free Horizon:** Computes rolling statistics, rate-of-change metrics, temporal indicators (hour, day, month, day of week), and a strict target variable horizon ($\text{AQI}_{t+72}$) engineered to eliminate data leakage.
-* **Feature Store & Model Registry:** Centralized, versioned dataset storage and model artifact tracking (`aqi_ridge_model.pkl`) using Hopsworks Cloud.
-* **Automated CI/CD Pipeline:** Scheduled GitHub Actions workflow (`cron: '0 * * * *'`) executing hourly feature ingestion and feature store updates using encrypted secrets.
-* **Interpretability & Explainability:** Global and local model decision explanations using SHAP value analysis to quantify exact feature impacts on the 72-hour forecast horizon.
-* **Two-Tier Serving Infrastructure:** Decoupled FastAPI backend service delivering low-latency inference to a Streamlit "Atmospheric Observatory" user interface.
+### 🌦️ Automated Environmental Data Ingestion
+
+The system automatically collects hourly atmospheric and meteorological data from the **Open-Meteo REST API**, including:
+
+* PM2.5
+* PM10
+* Carbon Monoxide (CO)
+* Nitrogen Dioxide (NO₂)
+* Sulfur Dioxide (SO₂)
+* Ozone (O₃)
+* Temperature
+* Relative Humidity
+* Surface Pressure
+* Wind Speed
+* Precipitation
+
+### 🧮 AQI Calculation & Feature Engineering
+
+The pipeline transforms raw environmental data into machine-learning features, including:
+
+* AQI sub-index calculations
+* Lag features
+* Rolling statistics
+* Rate-of-change features
+* Temporal features
+* Hour of day
+* Day of week
+* Month
+* Cyclical time features
+* Future AQI target variables
+
+The feature engineering pipeline is designed to maintain a **leak-free forecasting setup**, ensuring that future information is not accidentally used to predict the present.
+
+### ☁️ Hopsworks Feature Store
+
+Hopsworks Cloud provides centralized and versioned storage for the project's machine-learning features.
+
+Feature Store:
+
+`aqi_historical_features`
+
+Feature Store version:
+
+`v2`
+
+### 🤖 Machine Learning
+
+The forecasting model is based on **Ridge Regression**, providing a lightweight and interpretable baseline suitable for continuous AQI forecasting.
+
+The trained model is stored and versioned through the Hopsworks Model Registry.
+
+Model artifact:
+
+`aqi_ridge_model.pkl`
+
+### 🔄 Automated CI/CD
+
+GitHub Actions automatically executes the feature pipeline every hour using:
+
+`0 * * * *`
+
+The workflow:
+
+1. Retrieves environmental data
+2. Processes the incoming data
+3. Generates machine-learning features
+4. Validates the feature data
+5. Updates the Hopsworks Feature Store
+
+### 🔍 Explainable AI
+
+The project integrates **SHAP** to explain model predictions.
+
+The dashboard can display feature contributions showing which environmental variables are influencing the forecast.
+
+This makes the model output more transparent and easier to interpret.
+
+### 🚀 Two-Tier Model Serving
+
+The serving architecture separates inference from visualization:
+
+**Streamlit UI → FastAPI Backend → Trained Model**
+
+This separation makes the system easier to maintain and allows the API to be consumed by other applications in the future.
 
 ---
 
-## ⚙️ How It Works
+# ⚙️ How It Works
+
 ```mermaid
 graph TD
-    API["Open-Meteo REST API<br/>(Air Quality & Weather Data)"] --> GHA["GitHub Actions CI/CD<br/>(Hourly Scheduled Workflow)"]
-    GHA --> FS["Hopsworks Feature Store<br/>('aqi_historical_features')"]
-    
-    FS --> TP["Training Pipeline<br/>(Ridge Model + SHAP)"]
-    FS --> API_B["FastAPI Backend (8000)<br/>(Live Ingestion & Model)"]
-    
-    TP --> MR["Hopsworks Model Registry<br/>('aqi_ridge_model.pkl')"]
-    API_B --> UI["Streamlit Dashboard UI<br/>(Port 8501)"]
-```
-The system is orchestrated by an automated cloud data pipeline:
+    API["Open-Meteo REST API<br/>(Air Quality & Weather Data)"] --> GHA["GitHub Actions<br/>(Hourly Scheduled Workflow)"]
 
-### 1. Hourly Data Pipeline (`.github/workflows/feature_pipeline.yml`)
-* **Trigger:** Executes automatically at the start of every hour via GitHub Actions cron schedule (`0 * * * *`).
-* **Ingestion (`fetch_air_quality.py`):** Fetches real-time Karachi atmospheric pollutant and weather metrics from the Open-Meteo API.
-* **Transformation & Storage:** Computes lag features, temporal cycles, and target variables before appending transformed feature vectors into the Hopsworks Cloud Feature Store.
+    GHA --> FP["Feature Pipeline<br/>(Ingestion + Transformation)"]
+
+    FP --> FS["Hopsworks Feature Store<br/>aqi_historical_features v2"]
+
+    FS --> TP["Training Pipeline<br/>(Ridge Regression + SHAP)"]
+
+    TP --> MR["Hopsworks Model Registry<br/>aqi_ridge_model.pkl"]
+
+    MR --> API_B["FastAPI Backend<br/>(Port 8000)"]
+
+    API_B --> UI["Streamlit Dashboard<br/>(Port 8501)"]
+```
+
+## 🔄 End-to-End Pipeline
+
+### 1. Data Collection
+
+The system retrieves hourly air-quality and weather information from Open-Meteo.
+
+### 2. Automated Pipeline
+
+The GitHub Actions workflow runs automatically at the beginning of every hour.
+
+Workflow:
+
+`.github/workflows/feature_pipeline.yml`
+
+### 3. Feature Engineering
+
+The raw environmental data is transformed into machine-learning features.
+
+The pipeline generates:
+
+* Lagged observations
+* Rolling averages/statistics
+* Rate-of-change measurements
+* Temporal indicators
+* Cyclical time features
+* AQI target variables
+
+### 4. Feature Store
+
+The processed features are uploaded to the Hopsworks Feature Store:
+
+`aqi_historical_features`
+
+### 5. Model Training
+
+The training notebook retrieves the feature data and trains the Ridge Regression forecasting model.
+
+Model evaluation includes standard regression metrics such as:
+
+* MAE
+* RMSE
+* R²
+
+### 6. Model Registry
+
+The trained model is serialized and stored in the Hopsworks Model Registry as:
+
+`aqi_ridge_model.pkl`
+
+### 7. Model Serving
+
+The FastAPI backend loads the trained model and exposes the prediction service through a REST API.
+
+### 8. Dashboard
+
+The Streamlit frontend communicates with the FastAPI backend and presents the predictions through an interactive dashboard.
 
 ---
 
-## 📂 Repository Structure
+# 📂 Repository Structure
 
 ```text
 Pearls_AQI_Predictor/
+│
 ├── .github/
 │   └── workflows/
-│       └── feature_pipeline.yml          # GitHub Actions hourly CI/CD cron job
+│       └── feature_pipeline.yml
+│           # GitHub Actions hourly CI/CD workflow
+│
 ├── API/
-│   └── my_API.py                         # Standalone API test endpoint
+│   └── my_API.py
+│       # Standalone API test endpoint
+│
 ├── dashboard_UI/
-│   ├── App_dashboard_backend.py          # FastAPI backend server (Port 8000)
-│   └── app.py                            # Streamlit Atmospheric Observatory UI (Port 8501)
-├── data/                                 # Local feature snapshots and raw historical CSVs
+│   ├── App_dashboard_backend.py
+│   │   # FastAPI backend server
+│   │
+│   └── app.py
+│       # Streamlit Atmospheric Observatory UI
+│
+├── data/
+│   # Local raw data and feature snapshots
+│
 ├── feature_pipeline/
-│   ├── fetch_air_quality.py              # Real-time hourly data ingestion pipeline
-│   ├── backfill_histdata.py              # 2-Year historical backfill script
-│   ├── create_features.py               # Feature transformation logic
-│   ├── calculate_AQI.py                  # EPA sub-index calculation script
-│   └── validating_training_data.py      # Feature validation pipeline
+│   ├── fetch_air_quality.py
+│   │   # Real-time environmental data ingestion
+│   │
+│   ├── backfill_histdata.py
+│   │   # Historical data backfill
+│   │
+│   ├── create_features.py
+│   │   # Feature engineering
+│   │
+│   ├── calculate_AQI.py
+│   │   # AQI calculation
+│   │
+│   └── validating_training_data.py
+│       # Training-data validation
+│
 ├── notebook/
-│   ├── hopsworks_feature_store.ipynb     # Model training, evaluation & Hopsworks sync
-│   ├── data/                             # Notebook source data
-│   └── model_dir/                        # Serialized SHAP & Ridge artifacts
-├── requirements.txt                      # Project dependency definitions
-└── README.md                             # Project documentation
+│   ├── hopsworks_feature_store.ipynb
+│   │   # Model training, evaluation and Hopsworks integration
+│   │
+│   ├── data/
+│   │   # Notebook source data
+│   │
+│   └── model_dir/
+│       # Serialized model and SHAP artifacts
+│
+├── requirements.txt
+│   # Python dependencies
+│
+└── README.md
+    # Project documentation
+```
 
-🚀 Setup and Usage
-Prerequisites
-Python 3.10+
+---
 
-A Hopsworks Cloud account and API key
+# 🚀 Setup & Usage
 
-1. Installation
-Clone the repository:
+## Prerequisites
 
-Bash
-git clone [https://github.com/HuzaifaRizwan-GH/Pearls_AQI_Predictor.git](https://github.com/HuzaifaRizwan-GH/Pearls_AQI_Predictor.git)
+Before running the project, make sure you have:
+
+* Python **3.10 or later**
+* Git
+* A Hopsworks Cloud account
+* A Hopsworks API key
+
+---
+
+## 1. Clone the Repository
+
+```bash
+git clone https://github.com/HuzaifaRizwan-GH/Pearls_AQI_Predictor.git
+
 cd Pearls_AQI_Predictor
-Set up virtual environment:
+```
 
-Bash
-# Create environment
+---
+
+## 2. Create a Virtual Environment
+
+### Windows PowerShell
+
+```powershell
 python -m venv .venv-1
+```
 
-# Activate on Windows (PowerShell)
+Activate the environment:
+
+```powershell
 .venv-1\Scripts\Activate.ps1
+```
 
-# Install requirements
+---
+
+## 3. Install Dependencies
+
+```bash
 pip install -r requirements.txt
-2. Environment Variables
-Create a .env file in the project root and add your Hopsworks API Key:
+```
 
-Code snippet
+---
+
+# 🔐 Environment Variables
+
+Create a `.env` file in the project root directory.
+
+Add your Hopsworks API key:
+
+```env
 HOPSWORKS_API_KEY="your_hopsworks_api_key_here"
-💻 Manual Execution & Local Microservices
-Run the components locally in two separate terminals:
+```
 
-Terminal 1: Launch FastAPI Backend Server
-Bash
+> ⚠️ **Important:** Never commit your `.env` file or API keys to GitHub.
+
+Make sure `.env` is included in your `.gitignore` file.
+
+Example:
+
+```text
+.env
+.venv/
+__pycache__/
+*.pyc
+```
+
+---
+
+# 💻 Running the Application Locally
+
+The application consists of two services:
+
+1. FastAPI backend
+2. Streamlit frontend
+
+Run each service in a separate terminal.
+
+---
+
+## Terminal 1 — FastAPI Backend
+
+Navigate to the dashboard directory:
+
+```bash
 cd dashboard_UI
+```
+
+Start the FastAPI server:
+
+```bash
 python -m uvicorn App_dashboard_backend:app --reload --port 8000
-Swagger API UI: http://127.0.0.1:8000/docs
+```
 
-Prediction Endpoint: http://127.0.0.1:8000/predict
+The API will be available at:
 
-Terminal 2: Launch Streamlit Dashboard Frontend
-Bash
-cd dashboard_UI
+`http://127.0.0.1:8000`
+
+### Swagger API Documentation
+
+Open:
+
+`http://127.0.0.1:8000/docs`
+
+### Prediction Endpoint
+
+```text
+POST /predict
+```
+
+---
+
+## Terminal 2 — Streamlit Dashboard
+
+From the `dashboard_UI` directory:
+
+```bash
 python -m streamlit run app.py
-Dashboard Interface: http://localhost:8501
+```
 
-🏁 Conclusion
-This project delivers a complete MLOps architecture for air quality forecasting. By pairing cloud feature store technology with CI/CD automation, a FastAPI service layer, and SHAP explainability, the system provides automated, interpretable 72-hour AQI projections for Karachi.
+The dashboard will be available at:
 
-✅ Project Status: Production Ready. Automated cloud pipelines, microservice backend APIs, and the Streamlit UI dashboard are operational.
+`http://localhost:8501`
 
-👤 Author & Credits
-Developed with ❤️ by Huzaifa Rizwan as part of the 10Pearls Shine Internship Program 2026 - Data Science & MLOps Track.
+---
 
-Developer: Huzaifa Rizwan
+# 🔄 GitHub Actions Automation
 
-Track: Data Science & MLOps
+The project includes an automated GitHub Actions workflow:
 
-Organization: 10Pearls
+```text
+.github/workflows/feature_pipeline.yml
+```
 
-If you find this project useful, please consider giving it a ⭐ on GitHub!
+The workflow is scheduled to run every hour:
+
+```yaml
+cron: '0 * * * *'
+```
+
+The automated process:
+
+```text
+Open-Meteo
+    ↓
+Data Ingestion
+    ↓
+Feature Engineering
+    ↓
+Data Validation
+    ↓
+Hopsworks Feature Store
+```
+
+This allows the Feature Store to continuously receive updated environmental observations without requiring manual execution.
+
+---
+
+# 📊 Model Evaluation
+
+The forecasting model can be evaluated using standard regression metrics.
+
+### MAE — Mean Absolute Error
+
+Measures the average absolute difference between predicted and actual AQI values.
+
+Lower MAE indicates better prediction accuracy.
+
+### RMSE — Root Mean Squared Error
+
+Measures prediction error while giving greater weight to larger errors.
+
+Lower RMSE indicates better performance.
+
+### R² — Coefficient of Determination
+
+Measures how well the model explains the variation in the target variable.
+
+Values closer to `1.0` generally indicate better explanatory performance.
+
+---
+
+# 🔍 Explainability with SHAP
+
+The project uses **SHAP (SHapley Additive exPlanations)** to provide insight into model predictions.
+
+Instead of displaying only the predicted AQI, the dashboard can show which features contributed to the prediction.
+
+For example, environmental variables such as:
+
+* PM2.5
+* PM10
+* Temperature
+* Relative Humidity
+* Wind Speed
+* NO₂
+* O₃
+
+can be analyzed to understand their influence on the forecast.
+
+This improves model transparency and helps users understand **why** the model produced a particular prediction.
+
+---
+
+# 🏗️ Technology Stack
+
+| Component            | Technology       |
+| -------------------- | ---------------- |
+| Programming Language | Python           |
+| Data Source          | Open-Meteo API   |
+| Data Processing      | Pandas           |
+| Machine Learning     | Scikit-learn     |
+| Forecasting Model    | Ridge Regression |
+| Explainable AI       | SHAP             |
+| Feature Store        | Hopsworks        |
+| Model Registry       | Hopsworks        |
+| Backend API          | FastAPI          |
+| Frontend             | Streamlit        |
+| Visualization        | Plotly           |
+| Automation           | GitHub Actions   |
+| Version Control      | Git / GitHub     |
+
+---
+
+# 🎯 Project Goals
+
+The primary goals of Pearls AQI Predictor are to demonstrate how a machine-learning model can be transformed into an automated production-style system.
+
+The project focuses on:
+
+* Automated data pipelines
+* Reproducible feature engineering
+* Cloud Feature Store usage
+* Model versioning
+* CI/CD automation
+* API-based model serving
+* Interactive visualization
+* Explainable AI
+* 72-hour forecasting
+
+---
+
+# 🏁 Conclusion
+
+**Pearls AQI Predictor** demonstrates a complete end-to-end MLOps workflow for air-quality forecasting.
+
+The system connects automated environmental data ingestion, feature engineering, cloud Feature Store management, machine-learning model training, model registration, CI/CD automation, API-based inference, and explainable AI into a single architecture.
+
+The final system provides automated **24-, 48-, and 72-hour AQI forecasts for Karachi**, presented through an interactive Streamlit dashboard and served through a FastAPI inference layer.
+
+---
+
+# 👤 Author & Credits
+
+Developed with ❤️ by **Huzaifa Rizwan** as part of the **10Pearls Shine Internship Program 2026 — Data Science & MLOps Track**.
+
+**Developer:** Huzaifa Rizwan
+**Track:** Data Science & MLOps
+**Organization:** 10Pearls
+**Project:** Pearls AQI Predictor
+
+---
+
+## ⭐ Support the Project
+
+If you find this project useful or interesting, consider giving the repository a ⭐ on GitHub!
+
+**Built with Python, MLOps, and a goal of making air-quality forecasting more accessible. 🌍**
